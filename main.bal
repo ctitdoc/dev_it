@@ -15,5 +15,8 @@ public function main(string runConfigurationFile) returns error? {
         io:fprintln(io:stderr, "running makeSrvOppDockerComposeDev...");
         check makeSrvOppDockerComposeDev(getRunConfiguration("makeSrvOppDockerComposeDev"));
     }
-   
+    if (shouldBeRan("makeSrvOppOFBundleRelease")) {
+        io:fprintln(io:stderr, "running makeSrvOppOFBundleRelease...");
+        check makeSrvOppOFBundleRelease(getRunConfiguration("makeSrvOppOFBundleRelease"));
+    }   
 }

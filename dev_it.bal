@@ -109,6 +109,17 @@ public function makeSrvOppOFBundleDev(map<json>? runConfig) returns error? {
     return jsonFormater(jsonContent, runConfig);
 }
 
+public function makeSrvOppOFBundleRelease(map<json>? runConfig) returns error? {
+    string composerFileIn = check (<string?>runConfig["composerFileIn"] ?: "composer.json");
+    string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
+    io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
+    json jsonContent = check io:fileReadJson(composerFileIn);
+    check changeBundleReleaseConstraint(jsonContent, "ithis/openflex-bundle", <string> runConfig["releaseId"]);
+    check changeBundleRepository(jsonContent, "ithis-openflex-bundle", "vcs", "https://github.com/itautomotive-Dev/ithis-openflex-bundle.git");
+    check changePsr4(jsonContent);
+    return jsonFormater(jsonContent, runConfig);
+}
+
 public function changeBundleReleaseConstraint(json composerContent, string bundle, string constraint) returns error? {
     map<json> require = check composerContent.require.ensureType();
     require[bundle] = constraint;
