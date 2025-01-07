@@ -1,0 +1,107 @@
+
+
+ARG PHP_VERSION=8.2\n
+
+
+ARG NGINX_VERSION=1.23\n
+
+
+ARG ALPINE_VERSION=3\n
+
+
+ARG REGISTRY=ghcr.io/itautomotive-dev/golden-docker-images/\n
+
+
+FROM ${REGISTRY}php:${PHP_VERSION}-fpm-alpine${ALPINE_VERSION} AS symfony_php\n
+
+
+ARG APP_ENV=prod\n
+
+
+ARG CONF_NAME=${APP_ENV}\n
+
+
+ARG BUILD_VERSION\n
+
+
+ARG BUILD_SHA\n
+
+
+ENV BUILD_VERSION=${BUILD_VERSION}\n
+
+
+ENV BUILD_SHA=${BUILD_SHA}\n
+
+
+ENV IT_SYMFONY_DOC_MIGRAT_MIGRAT=true\n
+
+
+COPY --chown=www-data:www-data composer.json ./\n
+
+
+COPY --chown=www-data:www-data composer.lock ./\n
+
+
+COPY --chown=www-data:www-data symfony.lock ./\n
+
+
+COPY --chown=www-data:www-data auth.json ./\n
+
+
+COPY --chown=www-data:www-data package*.json ./\n
+
+
+COPY --chown=www-data:www-data docker/symfony/.env.${CONF_NAME} ./.env\n
+
+
+COPY --chown=www-data:www-data docker/symfony/.env.test .env.test\n
+
+
+COPY --chown=www-data:www-data bin bin/\n
+
+
+COPY --chown=www-data:www-data config config/\n
+
+
+COPY --chown=www-data:www-data public public/\n
+
+
+COPY --chown=www-data:www-data src src/\n
+
+
+COPY --chown=www-data:www-data templates templates/\n
+
+
+COPY --chown=www-data:www-data migrations migrations/\n
+
+
+COPY --chown=www-data:www-data data_migrations data_migrations/\n
+
+
+VOLUME /srv/app/var\n
+
+
+VOLUME /srv/app/public\n
+
+
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh\n
+
+
+RUN chmod +x /usr/local/bin/entrypoint.sh\n
+
+
+FROM symfony_php AS symfony_php_dev\n
+
+
+ARG APP_ENV=dev\n
+
+
+RUN XDEBUG_VERSION=`echo $PHP_VERSION | cut -f1,2 -d . | tr -d .` &&     apk add php${XDEBUG_VERSION}-pecl-xdebug &&     extDir="$(php -d 'display_errors=stderr' -r 'echo ini_get("extension_dir");')" &&     cp /usr/lib/php${XDEBUG_VERSION}/modules/xdebug.so ${extDir} &&     docker-php-ext-enable xdebug\n
+
+
+RUN rm $PHP_INI_DIR/php.ini && ln -s $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini\n
+
+
+RUN echo "" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && 	echo "zend_extension=xdebug.so" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && 	echo "xdebug.cli_color=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && 	echo "xdebug.mode=develop,debug,coverage" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && 	echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini\n
+
+

@@ -1,0 +1,227 @@
+pré-requis: installer virtualBox 7.1.2 ou +
+
+créer avec la vm virtualBox "elite" à partir du snapshot: ubuntu22.04_php5.6_apache (demander ce snapshot à Franck).
+
+user/password de la vm: elite/elite
+admin/password de la vm: root/elite : pour avoir un shell en root faire "su - root" et mettre ce password.
+
+cette vm devrait avoir les pkg suivant:
+
+apache2
+libapache2-mod-php5.6
+php5.6
+php5.6-cgi
+php5.6-cli
+php5.6-common
+php5.6-curl
+php5.6-json
+php5.6-mbstring
+php5.6-mysql
+php5.6-opcache
+php5.6-readline
+php5.6-xdebug
+php5.6-xml
+
+et ces repo de pkg qui gère les pkg ci-dessus : ppa:ondrej/php ppa:ondrej/apache2
+
+NB: les pkg php ci-dessus sont marqué en "hold" (via la cmd apt-mark hold ...) afin qu'ils ne soient pas updatés lrs des mises à
+jour que ubuntu va demander de faire.
+
+Vérifier que http://localhost/info.php retour bien la page "phpinfo" avec les modules correspondant à ces pkg.
+
+pour info:
+- l'image iso ubuntu initale utilisée: https://releases.ubuntu.com/22.04/
+- la proc de base exécutée pour setuper cette vm: https://osnote.com/how-to-install-php-5-6-on-ubuntu-24-04/
+
+setup du projet elitebo:
+
+- éteindre la vm et créer dans sa configuration un "Dossier partagé" permettant d'accéder au clone elitebo depuis la vm
+exemple : path du clone dans l'hote : /home/franck/dev/shared/elitebo
+nom du rep partagé "shared" => dans la vm : /media/sf_shared pointe sur /home/franck/dev/shared
+
+- ajouter le user elite dans le groupe vboxsf (groupe ayant accès au shared folders):
+sudo usermod -aG vboxsf elite
+
+- copier le contenu du rep .ssh de l'hôte dans le .ssh de la vm (utiliser  le rep shared pour pour faire transiter ce contenu)
+
+- créer la configuration apache du projet:
+  - créer (en root) le fichier /etc/apache2/sites-available/elite.conf avec comme contenu:
+
+  <VirtualHost *:80>
+      ServerName  www.eliteauto.fr
+      ServerAlias www.eliteauto.fr
+
+      DocumentRoot /var/www/elitebo
+      <Directory /var/www/elitebo>
+          Options Indexes FollowSymLinks
+          AllowOverride All
+          Require all granted
+          Order Allow,Deny
+          Allow from All
+          <IfModule mod_rewrite.c>
+              Options -MultiViews
+              RewriteEngine On
+              RewriteCond %{REQUEST_FILENAME} !-f
+              RewriteRule ^(.*)$ app_dev.php [QSA,L]
+          </IfModule>
+      </Directory>
+
+      # uncomment the following lines if you install assets as symlinks
+      # or run into problems when compiling LESS/Sass/CoffeScript assets
+      # <Directory /var/www/symfony_demo>
+      #     Options FollowSymlinks
+      # </Directory>
+      <Directory /var/www/elite/bundles>
+          <IfModule mod_rewrite.c>
+              RewriteEngine Off
+          </IfModule>
+      </Directory>
+      ErrorLog /var/log/apache2/elite_error.log
+      CustomLog /var/log/apache2/elite_access.log combined
+  </VirtualHost>
+
+-créer en root, le lien symbolic correspondant:
+ln -s /media/sf_shared/elitebo /var/www/elitebo
+
+- ?? tail -f /var/log/apache2/error.log
+
+- vérifier que ce grep retourne bien la même chose:
+root@elite:~# grep elite /etc/hosts
+127.0.1.1       elite.www.eliteauto.fr  elite
+root@elite:~#
+
+- changer les port des autres virtualhost en :80:
+  - grep -r ":80" /etc/apache2/sites-available => pour chaque host retourner changer son port (en 81 puis 82...);
+
+- jouer a2ensite elite ?? 000-default ??
+
+- arreter  les firewall pour permettre les échange réseaux entre la vm et son hote:
+  - dans l'hote faire: sudo ufw disable
+  - puis le faire dans la vm, puis redémarer la vm
+  - arreter de nouveau la vm pour configurer une accès reseau par pont entre la vm et l'hote:
+    - afficher la conf de la vm dans le gestionnaire de vm virtualBox et dans le section "Réseau":
+      - Mode d'accès au réseau : Accès par pont
+      - un "Name" est affiché, exemple: wlp0s20f3 => noter ce nom
+      - ...
+      - Mode Promiscuité: Allow All
+      - Adresse MAC affiche une valeur => OK
+      - Cable branché est checké
+      - enregistrer puis relancer la vm (OK)
+  - dans l'hote récuperer son ip pour ce "Name" (ex wlp0s20f3):
+    - ip addr show | grep wlp0s20f3
+    3: wlp0s20f3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+        inet 192.168.1.48/24 brd 192.168.1.255 scope global dynamic noprefixroute wlp0s20f3
+    => l'ip est 192.168.1.48 en TT et 192.168.128.247 au bureau (utiliser le fine/replace in file de phpstorm pour remplacer ds ts les fichier)
+  - dans la vm pinger cette ip:
+  elite@elite:~$ ping 192.168.1.48
+  PING 192.168.1.48 (192.168.1.48) 56(84) bytes of data.
+  64 bytes from 192.168.1.48: icmp_seq=1 ttl=64 time=0.753 ms
+  64 bytes from 192.168.1.48: icmp_seq=2 ttl=64 time=0.412 ms
+  64 bytes from 192.168.1.48: icmp_seq=3 ttl=64 time=0.424 ms
+  => youpi ! la vm et l'hote se parle via ce "pont"
+
+- parametrer cette ip pour la accès au conteneur de la bdd:
+  - le conteneur de la bdd est accessible depuis l'hote via locahost:3306 (voir plus loin le setup des conteneur)
+  - l'hote est vu depuis la vm via son ip donc : paramétrer cette ip comme database host dans app/config/parameters.yml:
+      database_host:     192.168.1.48
+  - même principe pour elsaticsearch accessible depuis l'hôte par http://localhost:9200 (voir plus loin le setup des conteneur)
+  - mettre l'ip dans app/config/elastica.yml:
+  fos_elastica:
+      clients:
+          default: { host: 192.168.1.48, port: 9200 }
+  la doc de conf de ce bundle: https://github.com/FriendsOfSymfony/FOSElasticaBundle/blob/master/doc/setup.md
+
+  - test : jouer dans le navigateur de la vm http://192.168.1.48:9200/eliteauto/offre/_search
+  => on doit recevoir erreur "index not found", car aucun index n'est encore créé, mais on accède bien au conteneur elasticsearch.
+
+- ajouter les pkg requis dans le composer.json (à rajouter à terme dans le snapshot initial de la vm):
+  - sudo apt install php5.6-gd php5.6-soap
+  - sudo apt-mark hold php5.6-gd php5.6-soap (pour qu'ils ne soient pas upgradé via les upgrades ubuntu)
+
+- recuperer le clone du bo:
+  - prerequis: ses credentials de son compte github
+  - installer git : sudo apt install git
+  - installer memcache: apt install memcached
+  - pour éviter la resaisie des credentials lors des action git, jouer: git config --global credential.helper store
+
+  - créer un repertoire home pour les clones (/home/elite/dev par defaut)
+  - dans ce rep jouer: git clone https://github.com/ELITE-AUTO/elitebo 
+  - installer phpstorm dans la vm
+  - installer mysql cli: sudo apt install mysql-client
+  - créer le prj avec "create project from existing files", selection du rep du clone, dernier e option "local source..."
+  - ouvrir le readme, clic sur "installation" et jouer cette procédure, avec ces modification:
+    - lors du composer install:
+      - si la cmd de post install de clear cache plante, la supprimer et faire à la place à la main un rm -rf app/cache/*
+      - si la cmd de post install des asset plante, la supprimer et faire à la place à la main:
+        mkdir -p web/bundles/framework
+        cp -r vendor/symfony/symfony/src/Symfony/Bundle/FrameworkBundle/Resources/public web/bundles/framework/.
+      il faut aussi créer un rep web/assets/dev et recopier (à la main pour le moment), tout ce qui est dans
+       web/assets dans web/assets/dev.
+    - si la cmd de creation du schema bdd plante, tenter cette alternative:
+      - genérer le script sql de creation: php app/console doctrine:schema:create --dump-file > bdd_schema.sql
+      - puis jouer ce script ds la bdd avec son client sql (celui de phpstorm par défaut)
+
+
+??
+- l'index elastic est eliteauto_dev et pas eliteauto
+- 2eme db elite_occasion pas peuplée par le script de fixture de la doc d'install => retour EA : db obsolete
+- fix bundle elastica : ajout contentype application/json dans la request => contrainte version actuelle d'elastic
+  - ajout de cette instruction:
+          curl_setopt($conn,CURLOPT_HTTPHEADER,  [
+              'Content-Type: application/json', ]);
+  - à la liggne 64 ici: https://github.com/ruflin/Elastica/blob/34a7e62a257febd5295efeacfa0209712e0ceb65/lib/Elastica/Transport/Http.php#L64
+- fix version actuelle doctrine orm unserialize: fix récupéré du code d'une version supérieure et ligne de code
+ remplacée à la main pour pas faire d'update du pkg avec les conséquence indéterminées sur l'update des deps
+ voila la ligne qui fix le bug : https://github.com/doctrine/orm/blob/c2135b38216c6c8a410e764792aa368e946f2ae5/lib/Doctrine/ORM/Mapping/ClassMetadataInfo.php#L831C37-L831C87
+ remplacer la même ligne dans la même méthode par celle-ci
+ - update mdp admin: appeler la cmd fosuserbundle de create d'un user avec un password "test" et l'arréter avant qu'elle fasse le flush en
+ bdd qui plante car chp nom/prenom obligatoire => récupérer les champs salt et password générés et les patcher à la
+ main en bdd => on peut alors se connecter au bo avec le password "test"
+ la cmd de create est: https://github.com/stfalcon/FOSUserBundle/blob/master/Resources/doc/command_line_tools.md#1-create-a-user
+ - setup apache2
+    => a bcp changé pour marchouiller => reprendre la conf actuelle du vhost, du /etc/hosts,
+ du lien symbo /var/www/elitebo et maj cette doc avec eux, ajouter a2enmod rewrite
+      jouer au début:  a2enmod proxy proxy_http
+      jouer: usermod -aG vboxsf www-data
+      jouer:  usermod -aG root www-data
+      jouer a2ensite 000-default ## avec port 81 pour ce vhost
+ - suppr des postinstall cmd clear cache et asset install à remplacer par les actions manuelles: rm des cache et cp des assets
+ - correction du xdebug.ini => maj cette doc avec
+ - apt install memcached
+ - git config --global --add safe.directory /media/sf_shared/elitebo
+ - pour env avec faible réseau: suppr pkg twitter/bootstrap du composer.lock et le recopier dans vendo à la main
+ (d'un env l'ayant deployé deja)
+ - avoir la derniere version à jour de virtaulaBox sinon risque incompat entre les vbox guest addition et l'archive iso
+  récup de chez ubuntu => un des symtome de ce pb : 5 minute pour lancer la vm et avoir le login
+ - apt-mark hold/show des pkg qui ne doivent pas etre upgrader lors des upgrade periodiques notifiés par ubuntu
+- le script de fixtures sql n'est pas compat avec les entities pour la table offres:
+  - recopier les insert d'offres ds un fichier dedié: tmp/offres.sql
+  - patcher les tables de la bdd pour qu'elles devienne t compat avec ces insert
+  - jouer: mysql --default-character-set=utf8 -h 192.168.1.48 -f -uelite -pelite elite < tmp/offres.sql
+  - rollbacker les patch (pour rester compat avec les entities)
+- la cmd de lancement des fixtures sql ne prend pas en compte le host => debugguer cette cmd et le rajouter à la main
+ds son code
+- pour accéder au BO depuis l'hote:
+  - dans une console de la vm jouer: ip addr show | grep enp0s3
+  - si rien ne sort jouer ip addr show et prendre l'ip du reseau No 2, le 1er étant "lo":
+    1: lo: ...
+    ...
+    2: <un autre nom>: ...
+    ...
+    inet <L'IP À PRENDRE>/...
+    ...
+  - dans le /etc/hosts de l'hote rajouter le mapping de cetet ip avec le domain du site de dev:
+    <L'IP À PRENDRE>    www.dev.elite-auto.fr
+  - dans le navigateur de l'hote taper: http://www.dev.elite-auto.fr et vérifier qu'on arrive bien sur la home du BO de dev.
+
+
+si l'update d'un pkg comme snap-store fait planter un upgrade ubuntu parce qu'il a des apps running:
+    fermer ces apps si on les connait
+   63  sudo snap refresh snap-store
+   64  killall snap-store
+   65  sudo systemctl restart snapd
+   66  sudo snap refresh snap-store
+
+
+pour voir service qui mettent du temps à démarrer:
+systemd-analyze blame

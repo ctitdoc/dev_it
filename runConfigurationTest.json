@@ -1,0 +1,6 @@
+{
+    "makeSrvOppOFBundleDev": {
+        "composerFileIn": "./composer.json",
+        "composerFileOut": "./composer_out.json"
+    }
+}

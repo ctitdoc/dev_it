@@ -1,0 +1,10 @@
+{
+    "makeSrvOppDockerDev": {
+        "jsonDockerFile": "/home/franck/dev/srv_opportunity/Dockerfile.json",
+        "dockerDockerFile": "/home/franck/dev/srv_opportunity/Dockerfile"
+    },
+    "makeSrvOppOFBundleDev": {
+        "composerFileIn": "/home/franck/dev/srv_opportunity/composer.json",
+        "composerFileOut": "/home/franck/dev/srv_opportunity/composer.json"
+    }
+}

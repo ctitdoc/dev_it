@@ -1,0 +1,19 @@
+## pathes
+projectDir = "/home/franck/dev/srv_opportunity"
+jsonConfigFile = "docker/aws-ecs/preprod.task-definition.json"
+balDir = "tests/bal/srv_opportunity"
+OFAuthJson = "OFAuth.json"
+
+## put in scenarios array below, the IDs to play the corresponding scenarios: "createOpp", "salesPerson", "oppStatus", "jira"
+## or put "all" to play all scenarios but "jira"
+## to be used only if you know what you do: "OFpwd" "test"
+scenarios = []
+
+## jira 
+jiraApiUrl = "https://log-ita.atlassian.net"
+## forever token
+jiraApiToken = "ATATT3xFfGF0FLYzkKqMqnWV6l2U7Oal739QunuEMeyGojkcUywXph7BmCLpekxXrb9K_eBEnwsjwz0cKxGrfiRr-d2mZeBpACmcuxcHzIIBjV1vINe1hl6Ziy2_Jz0Ln0p_3RHuflDCOISK0BsxPC2KCco61DvgniQJc4hKL48P8VehYz_R-40=859CB7C2"
+## unused: change me in jira account every end of year on day 30/12 for one more year
+## jiraApiToken = "ATATT3xFfGF0WSIQ0O44qYWBoKI282Vox2ZdmtypFaPUh-dbmq5PlTjUHHH-tDM5QNbUrMckU1go-JBUADz8oAlvzjYHLG1UtlosBC-33AWx0hJixGxgnSFtv21p59u-1gJtf3EEgwN0fjhvlLNBAUM5pUDZns9fx-D_wTpdwdZem06irb4qg6k=E2866E82"
+jiraUserName = "f.delahaye@bymycar.fr"
+jiraCsvFilePath = "/home/franck/dev/srv_opportunity/tests/bal/srv_opportunity/timesheet.csv"

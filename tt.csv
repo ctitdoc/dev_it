@@ -1,0 +1,17 @@
+day,code,hours,ticket,descr
+2024-11-12,PM,"0,5",BL-544,daily
+2024-11-12,PM,1,BL-544,CO
+2024-11-12,PM,"0,3",BL-544,saisie de mes tps
+2024-11-12,DEV,"6,5",EA-393,contribution à l’exécution de la procédure et aux résolution des divers problèmes : bug devis - test parcours bo - gestion crontabs…
+2024-11-13,PM,"0,5",BL-544,daily
+2024-11-13,PM,"0,3",BL-544,saisie de mes tps
+2024-11-13,DEV,6,EA-393,contribution à l’exécution de la procédure et aux résolution des divers problèmes : surveillance erreur dans les logs - bug redirection url du bo – bug d’import des devis dans le site
+2024-11-13,PM,"1,5",EA-386,"récup et organisation en wiki des docs fournies par Caroline, talks statut de la migration / actions post bascule, reporting de situation à la gestion de projet"
+2024-11-14,PM,"0,5",BL-544,daily
+2024-11-14,PM,"0,3",BL-544,saisie de mes tps
+2024-11-14,FRM,7,EA-386,atelier opé commerciale : préparation - deploiement - execution des diverses script préparés et check des résultat - résolution pb droit d’accès au wiki du projet jira EA
+2024-11-15,PM,"0,5",BL-544,daily
+2024-11-15,PM,"0,3",BL-544,saisie de mes tps
+2024-11-15,DEV,"0,5",EA-392,talk avec collegues de la team elite next sur des technos contributrices pour cette future plateforme.
+2024-11-15,PM,1,EA-392,classement des nombreuses page web ouverte pour les divers ticket en cours de ce prj EliteAuto (bascule BO - autres tâche de reprise de ce prj…).
+2024-11-15,DEV,"4,3",EA-386,setup et wip tache 23 : recup et orga de ttes le credentials - détection/diag/fix à l’occas du bug (preprod seulement) : disparition user du listing des users qd on lui met tous les droit… - résolution contrainte accès github via authent 2FA - WIP résolution contrainte accès bdd EA impossible en remote alors que ok au bureau : pas de solus coté team infra - check eventuel piste avec le VPN IPSEC…
