@@ -1,72 +1,171 @@
-# Composant Dev_it
 
-Ce composant permet de créer des scripts de manipulation des fichiers `Dockerfile`, `docker-compose.yml`, `composer.json`, etc., afin de les adapter à son environnement de développement.  
+## Composant Dev_it
 
-Il permet notamment de gérer des développements bundles en local pour effectuer des itérations de développement et de tests sur une application et ses bundles.  
+Ce composant permet de créer des script de manipulation des fichier Dockerfile, docker-compose.yml, composer.json ... afin de les adapter a son environnement de développement.
 
-## Fonctionnalités principales
+Il permet notament de gérer des développement bundles en local, afin de faire des itération de développement/test de changement de code, à la fois dans une app et dans ces bundles.
 
-Le composant facilite les étapes suivantes :
-1. **Cloner l'application et les bundles à modifier.**
-2. **Lancer le script `dev_it`** pour configurer les versions locales des bundles dans l'application.
-3. **Démarrer les conteneurs et exécuter les commandes comme `composer update`** pour les bundles locaux.
-4. **Développer et tester simultanément dans l'application et les bundles.**
-5. **Publier et relâcher les bundles une fois les tests terminés.**
-6. **Exécuter le script `dev_it`** pour restaurer l'application avec les bundles relâchés.
-7. **Tester la nouvelle version de l'application, puis la valider en commitant et en poussant les changements.**
+Pour cela il permet de scripter les modifications nécéssaires des fichier pré-cités pour executer un bundle clonés en local, via le cycle suivant:
 
-## Gestion des fichiers
+1. Cloner l'app et le(s) bundles à modifier;
 
-Les scripts de configuration et de restauration modifient les mêmes fichiers de base : 
-`Dockerfile`, `docker-compose.yml`, et `composer.json`.  
 
-Le composant `dev_it` expose des API permettant de manipuler ces fichiers.  
 
-### API de chargement des fichiers
+  
+2. lancer le script dev_it qui configure la version locale de ce(s) bundle(s) dans l'app;
 
-L'API permet de charger ces fichiers sous forme de liste, de map, ou d'objet dédié. Le format d'origine du fichier est automatiquement géré :
-- **Fichiers JSON :** chargés en array ou map selon leur contenu.
-- **Fichiers YAML :** chargés en map.
-- **Fichiers Dockerfile :** chargés en array de maps, chaque map contenant :
-  - Un champ `cmd` (la commande Docker, ex. `RUN`, `COPY`, `FROM`, etc.).
-  - Un champ `value` (le contenu après la commande, ex. `RUN "composer install..."`).
-  - D'autres informations utiles.
 
-Des types d'objet personnalisés peuvent être paramétrés, par exemple :
-- Pour un fichier `composer.json` :
-  - Une propriété `require` contenant une map `bundle/versionConstraint`.
-  - Une propriété `repositories` contenant un array d'objets `Repository`.  
-    - Un objet `Repository` a :
-      - Une propriété `type` (`vcs` ou `path`).
-      - Une propriété `url` (type string).
 
-### Exemples d'accès et de requêtes
+  
+3. lancer les container et exécuter dedans les "composer update" du/de(s) bundle(s) en local;
 
-L'API propose une syntaxe classique pour accéder aux données et un langage de requêtes :
-- Accès direct :
-  ```ballerina
-  maDockerComposeMap["version"]```
-- Mise à jour :
-  ```ballerina
-  monComposerObject.repositories[0].url = "/srv/app/mon_bundle.git";```
-- Requête sur un Dockerfile :
-```ballerinareturn from var statment in statments
-       where !(statment.cmd.includesMatch(re `(?i:run)`) && 
-              statment.original.includesMatch(re `(?i:composer\s+install)`))
-       select statment;
-```
 
-### API de génération des fichiers
 
-Les fichiers modifiés peuvent être générés dans leur format d'origine :
-- Générer un Dockerfile :
-  ```ballerina
-  toDocker(maDockerfileMap, "./Dockerfile");```
-- Générer un fichier composer.json :
- ```ballerina
-  toComposer(monComposerObject, "./composer.json");
-```
+  
+4. développer/tester les changement de code à la fois dans l'app et le(s) bundle(s);
 
-## Installation
 
-To Be Completed...
+
+  
+5. pusher et releaser le(s) bundle(s) une fois les dev/test terminés;
+
+
+
+  
+6. lancer le script dev_it qui restore la version de l'app avec le(s) bundle(s) releasé(s);
+
+
+
+  
+7. tester cette nouvelle version de l'app et si ok commiter/pusher cette version.
+
+
+
+  
+
+
+
+
+Ces script de configuration et restauration sont potentiellement spécifiques à chaque app, mais modifient les mêmes fichier en base : Dockerfile, docker-compose.yml, composer.json ...
+
+Le composant dev_it expose pour cela des api permettant de modifier ces fichier:
+
+* charger ces fichier sous forme de liste ou map manipulables: peu importe le format : json, Dockerfile ou yaml : le fichier est chargé en array/map (multi-dimensionel) ou objet spécifique et modifiable via une api identique quelquesoit le format d'origine:
+
+    * un fichier json est chargé en base en array ou map selon son type de contenu,
+
+
+
+  
+    * un fichier yaml est chargé en map, 
+
+
+
+  
+    * un fichier Dockerfile est chargé en array de map contenant, un champ "cmd" indiquant la commande docker (RUN, COPY, FROM, VOLUME...), sa value ( = ce qu'il y a après la commande, ex : RUN "composer install ..." ou VOLUME "/srv/app...") et diverses autres infos...
+
+
+
+  
+    * il est possible de paraméter des types d'objet dédiés: par exemple, un fichier composer.json peut être paramétré comme un objet ayant:
+
+        * une propriété "require" contenant la map bundle/versionConstraint,
+
+
+
+  
+        * une propriété "repositories" contenant un array d'objet de type Repository, un objet Repostory ayant une propriété "type" valant soit "vcs", soit "path", et une propriété url de type string;
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+* l'api propose une syntax d'accès classique à ces données et un langage de requete: exemple: 
+
+    * maDockerComposeMap["version"] référence la valeur de l'entrée "version" de la map représentant un fichier docker-compose.yml,
+
+
+
+  
+    * monComposerObject.require référence la map bundle/versionConstraint de l'objet représentant un fichier composer,
+
+
+
+  
+    * monComposerObject.repositories[0].url = "/srv/app/mon_bundle.git" met à jour l'url du premier repository du fichier composer;
+
+
+
+  
+    * exemple de requete sur un Dockerfile array qui retourne la commande qui match via regexp un composer install:
+
+        * return from var statment in statments
+
+
+
+  
+        *  where !(statment.cmd.includesMatch(re `(?i:run)`) && statment.original.includesMatch(re `(?i:composer\s+install)`))
+
+
+
+  
+        *  select statment;
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+* api de génération commune de ces fichier :
+
+    * toDocker(maDockerfileMap, "./Dockerfile"): génère la maDockerfileMap au format "Dockerfile" dans le fichier ./Dockerfile,
+
+
+
+  
+    * toComposer(monComposerObject, "./composer.json") : génère la monComposerObject au format "composer" dans le fichier ./composer.json.
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+### Installation
+
+To Be Completed ...
+
+
