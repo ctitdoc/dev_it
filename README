@@ -53,7 +53,8 @@ L'API propose une syntaxe classique pour accéder aux données et un langage de 
 ```ballerinareturn from var statment in statments
        where !(statment.cmd.includesMatch(re `(?i:run)`) && 
               statment.original.includesMatch(re `(?i:composer\s+install)`))
-       select statment;```
+       select statment;
+```
 
 ### API de génération des fichiers
 
@@ -63,7 +64,8 @@ Les fichiers modifiés peuvent être générés dans leur format d'origine :
   toDocker(maDockerfileMap, "./Dockerfile");```
 - Générer un fichier composer.json :
  ```ballerina
-  toComposer(monComposerObject, "./composer.json");```
+  toComposer(monComposerObject, "./composer.json");
+```
 
 ## Installation
 
