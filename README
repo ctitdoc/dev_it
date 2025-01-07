@@ -1,10 +1,10 @@
-## Composant Dev_it
+# Composant Dev_it
 
 Ce composant permet de créer des scripts de manipulation des fichiers `Dockerfile`, `docker-compose.yml`, `composer.json`, etc., afin de les adapter à son environnement de développement.  
 
 Il permet notamment de gérer des développements bundles en local pour effectuer des itérations de développement et de tests sur une application et ses bundles.  
 
-### Fonctionnalités principales
+## Fonctionnalités principales
 
 Le composant facilite les étapes suivantes :
 1. **Cloner l'application et les bundles à modifier.**
@@ -15,14 +15,14 @@ Le composant facilite les étapes suivantes :
 6. **Exécuter le script `dev_it`** pour restaurer l'application avec les bundles relâchés.
 7. **Tester la nouvelle version de l'application, puis la valider en commitant et en poussant les changements.**
 
-### Gestion des fichiers
+## Gestion des fichiers
 
 Les scripts de configuration et de restauration modifient les mêmes fichiers de base : 
 `Dockerfile`, `docker-compose.yml`, et `composer.json`.  
 
 Le composant `dev_it` expose des API permettant de manipuler ces fichiers.  
 
-#### API de chargement des fichiers
+### API de chargement des fichiers
 L'API permet de charger ces fichiers sous forme de liste, de map, ou d'objet dédié. Le format d'origine du fichier est automatiquement géré :
 - **Fichiers JSON :** chargés en array ou map selon leur contenu.
 - **Fichiers YAML :** chargés en map.
@@ -39,7 +39,7 @@ Des types d'objet personnalisés peuvent être paramétrés, par exemple :
       - Une propriété `type` (`vcs` ou `path`).
       - Une propriété `url` (type string).
 
-#### Exemples d'accès et de requêtes
+### Exemples d'accès et de requêtes
 L'API propose une syntaxe classique pour accéder aux données et un langage de requêtes :
 - Accès direct :
   ```ballerina
@@ -53,7 +53,7 @@ L'API propose une syntaxe classique pour accéder aux données et un langage de 
               statment.original.includesMatch(re `(?i:composer\s+install)`))
        select statment;```
 
-#### API de génération des fichiers
+### API de génération des fichiers
 Les fichiers modifiés peuvent être générés dans leur format d'origine :
 - Générer un Dockerfile :
   ```ballerina
@@ -62,5 +62,5 @@ Les fichiers modifiés peuvent être générés dans leur format d'origine :
  ```ballerina
   toComposer(monComposerObject, "./composer.json");```
 
-### Installation
+## Installation
 To Be Completed...
