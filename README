@@ -23,6 +23,7 @@ Les scripts de configuration et de restauration modifient les mêmes fichiers de
 Le composant `dev_it` expose des API permettant de manipuler ces fichiers.  
 
 ### API de chargement des fichiers
+
 L'API permet de charger ces fichiers sous forme de liste, de map, ou d'objet dédié. Le format d'origine du fichier est automatiquement géré :
 - **Fichiers JSON :** chargés en array ou map selon leur contenu.
 - **Fichiers YAML :** chargés en map.
@@ -40,6 +41,7 @@ Des types d'objet personnalisés peuvent être paramétrés, par exemple :
       - Une propriété `url` (type string).
 
 ### Exemples d'accès et de requêtes
+
 L'API propose une syntaxe classique pour accéder aux données et un langage de requêtes :
 - Accès direct :
   ```ballerina
@@ -54,6 +56,7 @@ L'API propose une syntaxe classique pour accéder aux données et un langage de 
        select statment;```
 
 ### API de génération des fichiers
+
 Les fichiers modifiés peuvent être générés dans leur format d'origine :
 - Générer un Dockerfile :
   ```ballerina
@@ -63,4 +66,5 @@ Les fichiers modifiés peuvent être générés dans leur format d'origine :
   toComposer(monComposerObject, "./composer.json");```
 
 ## Installation
+
 To Be Completed...
