@@ -1,3 +1,4 @@
+
 ## Composant Dev_it
 
 NB: le formatage de ce wiki est basique dans cette première version (car le markdown est généré à partir d'un script...), mais il sera amélioré dans les prochaines version => toutes mes confuses : pb de bande passante vs contraintes etc...
@@ -147,7 +148,7 @@ Le composant dev_it expose pour cela des api permettant de modifier ces fichier:
 
 
   
-    * toComposer(monComposerObject, "./composer.json") : génère la monComposerObject au format "composer" dans le fichier ./composer.json.
+    * toComposer(monComposerObject, "./composer.json") : génère monComposerObject au format "composer" dans le fichier ./composer.json.
 
         * NB: on a dit plus haut que monComposerObject est un paramétrage sous forme objet du fichier composer.json, avec seulement les deux propriétés ce fichier json: "require" et "repositories";  
 donc on pourrait croire que cette fonction toComposer(monComposerObject, "./composer.json") ne va générer que ces deux propriétés dans le fichier, mais que neni: par défaut la totalité du contenu est générée (sauf si on spécifie explicitement de ne générer que les propriétés de l'objet);  
@@ -177,3 +178,6 @@ donc le principe en gros est de ne paramétrer sous forme d'objet typé que les 
 ### Installation
 
 To Be Completed ...
+
+
+
