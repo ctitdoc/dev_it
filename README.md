@@ -1,9 +1,8 @@
-
 ## Composant Dev_it
 
-Ce composant permet de créer des script de manipulation des fichier Dockerfile, docker-compose.yml, composer.json ... afin de les adapter a son environnement de développement.
+NB: le formatage de ce wiki est basique dans cette première version (car le markdown est généré à partir d'un script...), mais il sera amélioré dans les prochaines version => toutes mes confuses : pb de bande passante vs contraintes etc...
 
-Il permet notament de gérer des développement bundles en local, afin de faire des itération de développement/test de changement de code, à la fois dans une app et dans ces bundles.
+Il permet notament de gérer des développement de bundles en local, afin de faire des itération de développement/test de changement de code, à la fois dans une app et dans ces bundles.
 
 Pour cela il permet de scripter les modifications nécéssaires des fichier pré-cités pour executer un bundle clonés en local, via le cycle suivant:
 
@@ -150,6 +149,16 @@ Le composant dev_it expose pour cela des api permettant de modifier ces fichier:
   
     * toComposer(monComposerObject, "./composer.json") : génère la monComposerObject au format "composer" dans le fichier ./composer.json.
 
+        * NB: on a dit plus haut que monComposerObject est un paramétrage sous forme objet du fichier composer.json, avec seulement les deux propriétés "require" et "repositories";  
+donc on pourrait croire que cette fonction toComposer(monComposerObject, "./composer.json") ne va générer que ces deux propriétés dans le fichier, mais que neni: par défaut la totalité du contenu est générée (sauf si on spécifie explicitement de ne générer que les propriétés de l'objet).
+
+
+
+  
+
+
+
+
 
 
   
@@ -167,5 +176,8 @@ Le composant dev_it expose pour cela des api permettant de modifier ces fichier:
 ### Installation
 
 To Be Completed ...
+
+
+
 
 
