@@ -3,8 +3,17 @@
         "jsonDockerFile": "/home/franck/dev/srv_opportunity/Dockerfile.json",
         "dockerDockerFile": "/home/franck/dev/srv_opportunity/Dockerfile"
     },
-    "makeSrvOppOFBundleDev": {
+    "makeBundlesDev": {
         "composerFileIn": "/home/franck/dev/srv_opportunity/composer.json",
-        "composerFileOut": "/home/franck/dev/srv_opportunity/composer.json"
+        "composerFileOut": "/home/franck/dev/srv_opportunity/composer.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "*",
+                "repoUrlPattern": "ithis-openflex-bundle.git",
+                "repoUrl": "/srv/app/bundles/ithis-openflex-bundle",
+                "repoType": "path"
+            }
+        ]
     }
 }

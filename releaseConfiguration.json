@@ -2,6 +2,6 @@
     "makeSrvOppOFBundleRelease": {
         "composerFileIn": "/home/franck/dev/srv_opportunity/composer.json",
         "composerFileOut": "/home/franck/dev/srv_opportunity/composer.json",
-        "releaseId": "^2.8.0"
+        "releaseId": "^2.8.1"
     }
 }

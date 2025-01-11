@@ -7,9 +7,9 @@ public function main(string runConfigurationFile) returns error? {
 
         check toDocker([makeSrvOppDockerDev], getRunConfiguration("makeSrvOppDockerDev"));
     }
-    if (shouldBeRan("makeSrvOppOFBundleDev")) {
-        io:fprintln(io:stderr, "running makeSrvOppOFBundleDev...");
-        check makeSrvOppOFBundleDev(getRunConfiguration("makeSrvOppOFBundleDev"));
+    if (shouldBeRan("makeBundlesDev")) {
+        io:fprintln(io:stderr, "running makeBundlesDev...");
+        check makeBundlesDev(getRunConfiguration("makeBundlesDev"));
     }
     if (shouldBeRan("makeSrvOppDockerComposeDev")) {
         io:fprintln(io:stderr, "running makeSrvOppDockerComposeDev...");

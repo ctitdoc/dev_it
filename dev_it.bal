@@ -98,13 +98,20 @@ public function addEntryPointStatments(DockerStatment[] statments) returns Docke
     return result;
 }
 
-public function makeSrvOppOFBundleDev(map<json>? runConfig) returns error? {
+public function makeBundlesDev(map<json>? runConfig) returns error? {
     string composerFileIn = check (<string?>runConfig["composerFileIn"] ?: "composer.json");
     string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
     io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
     json jsonContent = check io:fileReadJson(composerFileIn);
-    check changeBundleReleaseConstraint(jsonContent, "ithis/openflex-bundle", "*");
-    check changeBundleRepository(jsonContent, "ithis-openflex-bundle.git", "path", "/srv/app/bundles/ithis-openflex-bundle");
+    json[] bundles = check runConfig["bundles"].ensureType();
+    foreach json bundleConf in bundles {
+        map<json> bundle = check bundleConf.ensureType();
+        check changeBundleReleaseConstraint(jsonContent, <string> bundle["bundle"], <string> bundle["releaseConstraint"]);
+        check changeBundleRepository(jsonContent, 
+                        <string> bundle["repoUrlPattern"],
+                        <string> bundle["repoType"],
+                        <string> bundle["repoUrl"]);
+    }
     check changePsr4(jsonContent);
     return jsonFormater(jsonContent, runConfig);
 }
