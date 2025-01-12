@@ -9,14 +9,14 @@ public function main(string runConfigurationFile) returns error? {
     }
     if (shouldBeRan("makeBundlesDev")) {
         io:fprintln(io:stderr, "running makeBundlesDev...");
-        check makeBundlesDev(getRunConfiguration("makeBundlesDev"));
+        check makeBundlesChanges(getRunConfiguration("makeBundlesDev"));
     }
     if (shouldBeRan("makeSrvOppDockerComposeDev")) {
         io:fprintln(io:stderr, "running makeSrvOppDockerComposeDev...");
         check makeSrvOppDockerComposeDev(getRunConfiguration("makeSrvOppDockerComposeDev"));
     }
-    if (shouldBeRan("makeSrvOppOFBundleRelease")) {
-        io:fprintln(io:stderr, "running makeSrvOppOFBundleRelease...");
-        check makeSrvOppOFBundleRelease(getRunConfiguration("makeSrvOppOFBundleRelease"));
+    if (shouldBeRan("makeBundlesRelease")) {
+        io:fprintln(io:stderr, "running makeBundlesRelease...");
+        check makeBundlesChanges(getRunConfiguration("makeBundlesRelease"));
     }   
 }

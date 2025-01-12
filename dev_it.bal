@@ -98,7 +98,7 @@ public function addEntryPointStatments(DockerStatment[] statments) returns Docke
     return result;
 }
 
-public function makeBundlesDev(map<json>? runConfig) returns error? {
+public function makeBundlesChanges(map<json>? runConfig) returns error? {
     string composerFileIn = check (<string?>runConfig["composerFileIn"] ?: "composer.json");
     string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
     io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
@@ -112,17 +112,6 @@ public function makeBundlesDev(map<json>? runConfig) returns error? {
                         <string> bundle["repoType"],
                         <string> bundle["repoUrl"]);
     }
-    check changePsr4(jsonContent);
-    return jsonFormater(jsonContent, runConfig);
-}
-
-public function makeSrvOppOFBundleRelease(map<json>? runConfig) returns error? {
-    string composerFileIn = check (<string?>runConfig["composerFileIn"] ?: "composer.json");
-    string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
-    io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
-    json jsonContent = check io:fileReadJson(composerFileIn);
-    check changeBundleReleaseConstraint(jsonContent, "ithis/openflex-bundle", <string> runConfig["releaseId"]);
-    check changeBundleRepository(jsonContent, "ithis-openflex-bundle", "vcs", "https://github.com/itautomotive-Dev/ithis-openflex-bundle.git");
     check changePsr4(jsonContent);
     return jsonFormater(jsonContent, runConfig);
 }

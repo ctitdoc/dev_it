@@ -11,5 +11,24 @@
                 "repoType": "path"
             }
         ]
+    },
+    "makeBundlesRelease": {
+        "composerFileIn": "./composer_out.json",
+        "composerFileOut": "./composer_out2.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "^2.8.1",
+                "repoUrlPattern": "ithis-openflex-bundle",
+                "repoUrl": "https://github.com/itautomotive-Dev/ithis-openflex-bundle.git",
+                "repoType": "vcs"
+            }
+        ]
+    },
+    "backup": {
+        "makeSrvOppDockerComposeDev": {
+            "dockerComposeFileIn": "./docker-compose.yml",
+            "dockerComposeFileOut": "./docker-compose-result.yml"
+        }
     }
 }
