@@ -10,7 +10,8 @@
                 "repoUrl": "/srv/app/bundles/ithis-openflex-bundle",
                 "repoType": "path"
             }
-        ]
+        ],
+        "bundlesUpdateFile": "./bundlesUpdate.sh"
     },
     "makeBundlesRelease": {
         "composerFileIn": "./composer_out.json",

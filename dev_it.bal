@@ -111,6 +111,10 @@ public function makeBundlesChanges(map<json>? runConfig) returns error? {
                         <string> bundle["repoUrlPattern"],
                         <string> bundle["repoType"],
                         <string> bundle["repoUrl"]);
+        
+        if ! (runConfig["bundlesUpdateFile"] is ()) {
+            check addBundleUpdateCmd(<string> bundle["bundle"], <string> runConfig["bundlesUpdateFile"]);
+        }
     }
     check changePsr4(jsonContent);
     return jsonFormater(jsonContent, runConfig);
@@ -126,6 +130,14 @@ public function changePsr4(json composerContent) returns error? {
     autoload["psr-4"] = {
             "App\\\\": "src/"
         };
+}
+
+public function addBundleUpdateCmd(string bundle, string bundlesUpdateFile) returns error? {
+    checkpanic io:fileWriteString(
+        bundlesUpdateFile,
+        string `composer update ${bundle}
+`, 
+        io:APPEND);
 }
 
 public function changeBundleRepository(json composerContent, string bundleRepository, string repoType, string repoUrl) returns error? {
