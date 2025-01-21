@@ -199,12 +199,7 @@ Les évolutions flaguées [refacto] décrivent des améliorations du code par ra
 
 
   
-* définit un type pour les fichier json: le code de manipulation du fichier composer.json n'est pas basé sur une définition de type pour ce fichier;  
+* [refacto] définit un type pour les fichier json: le code de manipulation du fichier composer.json n'est pas basé sur une définition de type pour ce fichier;  
 cela est du au fait que le champ json "type" d'un repository bugait lorsqu'on le définissait comme champ de type car "type" est un mot clé du langage, mais la doc dit de précéder les identifier correspondant à des mot clé du lanage par un '; il faut donc définir ce type de fichier avec une champ 'type et refactorer en conséquence le code de manupulation de ce type de fichier;  
-
-
-
-
-  
 
 
