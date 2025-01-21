@@ -1,4 +1,3 @@
-
 ## Composant Dev_it
 
 NB: le formatage de ce wiki est basique dans cette première version (car le markdown est généré à partir d'un script...), mais il sera amélioré dans les prochaines version => toutes mes confuses : pb de bande passante vs contraintes etc...
@@ -12,12 +11,12 @@ Pour cela il permet de scripter les modifications nécéssaires des fichier pré
 
 
   
-2. lancer le script dev_it qui configure la version locale de ce(s) bundle(s) dans l'app;
+2. configurer et lancer le script dev_it qui configure la version locale de ce(s) bundle(s) dans l'app;
 
 
 
   
-3. lancer les container et exécuter dedans les "composer update" du/de(s) bundle(s) en local;
+3. lancer les container, puis lancer "make docker/cmds" pour exécuter dedans les "composer update" du/de(s) bundle(s) en local;
 
 
 
@@ -32,12 +31,17 @@ Pour cela il permet de scripter les modifications nécéssaires des fichier pré
 
 
   
-6. lancer le script dev_it qui restore la version de l'app avec le(s) bundle(s) releasé(s);
+6. configurer et lancer le script dev_it qui restore la version de l'app avec le(s) bundle(s) releasé(s);
 
 
 
   
-7. tester cette nouvelle version de l'app et si ok commiter/pusher cette version.
+7. lancer "make docker/cmds" pour exécuter les "composer update" du/de(s) bundle(s) releasé(s);
+
+
+
+  
+8. tester cette nouvelle version de l'app et si ok commiter/pusher cette version.
 
 
 
@@ -179,5 +183,28 @@ donc le principe en gros est de ne paramétrer sous forme d'objet typé que les 
 
 To Be Completed ...
 
+
+
+
+
+
+
+### Evolutions
+
+Cette section décrit les évolutions prévues de ce composant.  
+Les évolutions flaguées [refacto] décrivent des améliorations du code par rapport au guidelines de qualité de code.
+
+* structurer le code par app: déplacer le code spécifique à une app dans un repertoire du nom de l'app;
+
+
+
+  
+* définit un type pour les fichier json: le code de manipulation du fichier composer.json n'est pas basé sur une définition de type pour ce fichier;  
+cela est du au fait que le champ json "type" d'un repository bugait lorsqu'on le définissait comme champ de type car "type" est un mot clé du langage, mais la doc dit de précéder les identifier correspondant à des mot clé du lanage par un '; il faut donc définir ce type de fichier avec une champ 'type et refactorer en conséquence le code de manupulation de ce type de fichier;  
+
+
+
+
+  
 
 
