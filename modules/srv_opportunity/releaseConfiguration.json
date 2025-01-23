@@ -1,0 +1,15 @@
+{
+    "makeBundlesRelease": {
+        "composerFileIn": "/home/franck/dev/srv_opportunity/composer.json",
+        "composerFileOut": "/home/franck/dev/srv_opportunity/composer.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "^2.8.1",
+                "repoUrlPattern": "ithis-openflex-bundle",
+                "repoUrl": "https://github.com/itautomotive-Dev/ithis-openflex-bundle.git",
+                "repoType": "vcs"
+            }
+        ]
+    }
+}

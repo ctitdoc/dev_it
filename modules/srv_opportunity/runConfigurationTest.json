@@ -1,0 +1,39 @@
+{
+    "makeSrvOppDockerDev": {
+        "jsonDockerFile": "./fixtures/test1.json",
+        "dockerDockerFile": "./fixtures/test1.docker"
+    },
+    "makeBundlesDev": {
+        "composerFileIn": "./fixtures/composer.json",
+        "composerFileOut": "./fixtures/composer_out.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "*",
+                "repoUrlPattern": "ithis-openflex-bundle.git",
+                "repoUrl": "/srv/app/bundles/ithis-openflex-bundle",
+                "repoType": "path"
+            }
+        ],
+        "bundlesUpdateFile": "./fixtures/bundlesUpdate.sh"
+    },
+    "makeBundlesRelease": {
+        "composerFileIn": "./fixtures/composer_out.json",
+        "composerFileOut": "./fixtures/composer_out2.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "^2.8.1",
+                "repoUrlPattern": "ithis-openflex-bundle",
+                "repoUrl": "https://github.com/itautomotive-Dev/ithis-openflex-bundle.git",
+                "repoType": "vcs"
+            }
+        ]
+    },
+    "backup": {
+        "makeSrvOppDockerComposeDev": {
+            "dockerComposeFileIn": "./fixtures/docker-compose.yml",
+            "dockerComposeFileOut": "./fixtures/docker-compose-result.yml"
+        }
+    }
+}

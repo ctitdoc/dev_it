@@ -1,0 +1,4 @@
+day;code;hours;ticket;descr
+2024-12-23;PM;0,5;BL-544;daily
+2024-12-23;PM;0,5;BL-544;saisie de mes tps
+2024-12-23;DEV;3;BL-629;test phase completion: setup of OF FR preprod env with OF team and test/fix roundtripping of this env: diag of a last right permission issue : cannot reference a veh in an FR opportunity - permission issue solving of my docker dev env.
