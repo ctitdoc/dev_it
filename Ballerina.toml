@@ -1,6 +1,6 @@
 [package]
-org = "franck"
-name = "srv_opportunity"
+org = "it_doc"
+name = "dev_it"
 version = "0.1.0"
 distribution = "2201.8.6"
 
