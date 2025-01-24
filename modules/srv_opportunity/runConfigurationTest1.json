@@ -1,0 +1,16 @@
+{
+    "makeBundlesDev": {
+        "composerFileIn": "./fixtures/composer.json",
+        "composerFileOut": "./fixtures/composer_out3.json",
+        "bundles" : [
+            {
+                "bundle": "ithis/openflex-bundle",
+                "releaseConstraint": "*",
+                "repoUrlPattern": "ithis-openflex-bundle.git",
+                "repoUrl": "/srv/app/bundles/ithis-openflex-bundle",
+                "repoType": "path"
+            }
+        ],
+        "bundlesUpdateFile": "./fixtures/bundlesUpdate.sh"
+    }
+}
