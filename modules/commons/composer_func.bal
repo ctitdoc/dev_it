@@ -8,6 +8,11 @@ public function makeBundlesChanges(map<json>? runConfig) returns error? {
     string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
     io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
     json jsonContent = check io:fileReadJson(composerFileIn);
+    // ComposerContent is just used here for jsonContent validation check as using this typed version of json content 
+    // does not generate json content items in the original order : current limitation of Ballerina : only map<T>
+    // types are generated with respect of the map items order...
+    // see : https://github.com/ballerina-platform/ballerina-spec/issues/897
+    ComposerContent composerContent = check jsonContent.cloneWithType();
     json[] bundles = check runConfig["bundles"].ensureType();
     foreach json bundleConf in bundles {
         map<json> bundle = check bundleConf.ensureType();

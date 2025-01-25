@@ -58,7 +58,7 @@ public function changeBundleRepositoryAlt(ComposerContent composerContent, strin
 //FIXME: Ballerina limitation: typed records like ComposerContent do not output the original json keys in the salme order
 public function jsonFormaterAlt(ComposerContent composerContent, map<json>? runConfig) returns error? {
     string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
-    string prettified = prettify:prettify(<json> composerContent);
+    string prettified = prettify:prettify(composerContent.toJson());
 
     if (composerFileOut == "STDOUT") {
         io:print(prettified);
