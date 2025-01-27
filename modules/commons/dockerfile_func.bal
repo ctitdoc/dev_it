@@ -20,18 +20,19 @@ public function toDocker((function (DockerStatment[] statments, map<json>? runCo
 }
 
 public function removeComposerInstallStatment(DockerStatment[] statments) returns DockerStatment[] {
-    regexp:RegExp cmdPattern = re `(?i:run)`;
-    regexp:RegExp originalPattern = re `(?i:composer\s+install)`;
     return from var statment in statments
-        where !(statment.cmd.includesMatch(cmdPattern) && statment.original.includesMatch(originalPattern))
+        where !(
+                  statment.cmd.includesMatch(re `(?i:run)`) &&
+                  statment.original.includesMatch(re `(?i:composer\s+install)`)
+                )
         select statment;
 };
 
 public function removeComposerDumpAutoloadStatment(DockerStatment[] statments) returns DockerStatment[] {
-    regexp:RegExp cmdPattern = re `(?i:run)`;
-    regexp:RegExp originalPattern = re `(?i:composer\s+dump-autoload)`;
     return from var statment in statments
-        where !(statment.cmd.includesMatch(cmdPattern) && statment.original.includesMatch(originalPattern))
+        where !(
+                  statment.cmd.includesMatch(re `(?i:run)`) &&
+                  statment.original.includesMatch(re `(?i:composer\s+dump-autoload)`))
         select statment;
 };
 
