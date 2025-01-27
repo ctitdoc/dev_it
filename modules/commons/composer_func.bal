@@ -9,7 +9,7 @@ public function makeBundlesChanges(map<json>? runConfig) returns error? {
     json[] bundles = check runConfig["bundles"].ensureType();
     foreach json bundleConf in bundles {
         map<json> bundle = check bundleConf.ensureType();
-        check changeBundleReleaseConstraintAlt(composerContent, <string> bundle["bundle"], <string> bundle["releaseConstraint"]);
+        check changeBundleReleaseConstraint(composerContent, <string> bundle["bundle"], <string> bundle["releaseConstraint"]);
         check changeBundleRepository(composerContent,
                         <string> bundle["repoUrlPattern"],
                         <string> bundle["repoType"],
@@ -27,7 +27,7 @@ public function makeBundlesChanges(map<json>? runConfig) returns error? {
     return jsonFormater(jsonContent, composerFileOut);
 }
 
-public function changeBundleReleaseConstraintAlt(ComposerContent composerContent, string bundle, string constraint) returns error? {
+public function changeBundleReleaseConstraint(ComposerContent composerContent, string bundle, string constraint) returns error? {
     composerContent.require[bundle] = constraint;
 }
 
