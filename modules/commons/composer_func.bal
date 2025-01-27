@@ -1,23 +1,16 @@
 import ballerina/io;
-import thisarug/prettify;
-import ballerina/file;
-
 
 public function makeBundlesChanges(map<json>? runConfig) returns error? {
     string composerFileIn = check (<string?>runConfig["composerFileIn"] ?: "composer.json");
     string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
     io:fprintln(io:stderr, `Converting ${composerFileIn} to ${composerFileOut}`);
-    json jsonContent = check io:fileReadJson(composerFileIn);
-    // ComposerContent is just used here for jsonContent validation check as using this typed version of json content 
-    // does not generate json content items in the original order : current limitation of Ballerina : only map<T>
-    // types are generated with respect of the map items order...
-    // see : https://github.com/ballerina-platform/ballerina-spec/issues/897
+    map<json> jsonContent = check (check io:fileReadJson(composerFileIn)).cloneWithType();
     ComposerContent composerContent = check jsonContent.cloneWithType();
     json[] bundles = check runConfig["bundles"].ensureType();
     foreach json bundleConf in bundles {
         map<json> bundle = check bundleConf.ensureType();
-        check changeBundleReleaseConstraint(jsonContent, <string> bundle["bundle"], <string> bundle["releaseConstraint"]);
-        check changeBundleRepository(jsonContent, 
+        check changeBundleReleaseConstraintAlt(composerContent, <string> bundle["bundle"], <string> bundle["releaseConstraint"]);
+        check changeBundleRepository(composerContent,
                         <string> bundle["repoUrlPattern"],
                         <string> bundle["repoType"],
                         <string> bundle["repoUrl"]);
@@ -26,18 +19,20 @@ public function makeBundlesChanges(map<json>? runConfig) returns error? {
             check addBundleUpdateCmd(<string> bundle["bundle"], <string> runConfig["bundlesUpdateFile"]);
         }
     }
-    check changePsr4(jsonContent);
-    return jsonFormater(jsonContent, runConfig);
+    check changePsr4(composerContent);
+    jsonContent["require"] = composerContent.require.toJson();
+    jsonContent["autoload"] = composerContent.autoload.toJson();
+    jsonContent["repositories"] = composerContent.repositories.toJson();
+
+    return jsonFormater(jsonContent, composerFileOut);
 }
 
-public function changeBundleReleaseConstraint(json composerContent, string bundle, string constraint) returns error? {
-    map<json> require = check composerContent.require.ensureType();
-    require[bundle] = constraint;
+public function changeBundleReleaseConstraintAlt(ComposerContent composerContent, string bundle, string constraint) returns error? {
+    composerContent.require[bundle] = constraint;
 }
 
-public function changePsr4(json composerContent) returns error? {
-    map<json> autoload = check composerContent.autoload.ensureType();
-    autoload["psr-4"] = {
+public function changePsr4(ComposerContent composerContent) returns error? {
+    composerContent.autoload.'psr\-4 = {
             "App\\\\": "src/"
         };
 }
@@ -50,27 +45,10 @@ public function addBundleUpdateCmd(string bundle, string bundlesUpdateFile) retu
         io:APPEND);
 }
 
-public function changeBundleRepository(json composerContent, string bundleRepository, string repoType, string repoUrl) returns error? {
-    json[] repos = check composerContent.repositories.ensureType();
-    json bundelRepository = from var repository in repos
+public function changeBundleRepository(ComposerContent composerContent, string bundleRepository, string repoType, string repoUrl) returns error? {
+    ComposerRepository[] bundleRepos = from var repository in composerContent.repositories
         where (<string>check repository.url).includesMatch(re `(?i:${bundleRepository})`)
         select repository;
-    json[] repositories = check bundelRepository.ensureType();
-    map<json> theRepo = check repositories[0].ensureType();
-    theRepo["url"] = repoUrl;
-    theRepo["type"] = repoType;
-}
-
-public function jsonFormater(json jsonContent, map<json>? runConfig) returns error? {
-    string composerFileOut = check (<string?>runConfig["composerFileOut"] ?: "STDOUT");
-    string prettified = prettify:prettify(jsonContent);
-
-    if (composerFileOut == "STDOUT") {
-        io:print(prettified);
-    } else {
-        if (checkpanic file:test(composerFileOut, file:EXISTS)) {
-            checkpanic file:remove(composerFileOut);
-        }
-        checkpanic io:fileWriteString(composerFileOut, prettified);
-    }
+    bundleRepos[0].url = repoUrl;
+    bundleRepos[0].'type = repoType;
 }
