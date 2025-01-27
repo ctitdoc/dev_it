@@ -1,5 +1,4 @@
 Manages dev environnment of srv_opportunity app.
-[//]: # (above is the module summary)
 
 # Module Overview
 Manages dev environnment of srv_opportunity app:

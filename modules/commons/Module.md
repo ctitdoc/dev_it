@@ -1,5 +1,4 @@
 Provides a "cloud deploy files" processing api
-[//]: # (above is the module summary)
 
 # Module Overview
 Provides an extensible set of functions to :
